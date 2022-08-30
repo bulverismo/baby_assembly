@@ -1,0 +1,40 @@
+function ler_bytes() {
+
+    if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]
+    then
+        echo "
+            Uso correto:
+            ler_bytes 0 2 txt arquivo_binario
+            ler_bytes 0 2 binario arquivo_binario
+            ler_bytes byte_inicial qtd_de_bytes_a_ler tipo_saida arquivo_binario
+        " >&2 
+        return 1
+    fi
+
+    byte_inicial="$1"
+    qtd_bytes="$2"
+    tipo_saida="$3"
+    arquivo="$4"
+
+    case $tipo_saida in
+        binario)    xxd -ps -s "$byte_inicial" -l "$qtd_bytes" "$arquivo"  | xxd -r -p ;;
+        txt)        xxd -ps -s "$byte_inicial" -l "$qtd_bytes" "$arquivo" ;;
+    esac
+
+}
+
+function ler_cabecalho() {
+
+    if [ -z "$1" ]
+    then
+        echo "
+            Uso correto:
+            ler_cabecalho arquivo.mem
+        " >&2
+        return 1
+    fi
+
+    arquivo="$1"
+
+    ler_bytes "0" "4" "binario" "$arquivo"
+}

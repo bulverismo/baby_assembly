@@ -70,13 +70,8 @@ function ler_arquivo_de_memoria() {
     memory=( $(tr '\n' ' ' < $arquivo_memoria) )
 }
 
-function parte_dos_dados() {
+function imprimir_dados() {
     echo ${data_loc/-1/}
-}
-function imprimir_registradores_e_instrucao() {
-
-    echo "AC = $AC PC = $PC | instrução $instr_type $(parte_dos_dados)"
-
 }
 
 function interpret() {
@@ -109,6 +104,11 @@ function interpret() {
 
     done
     echo ${memory[@]} | tr ' ' '\n'
+    if [ "$DEBUG" == "debug_registradores" ]
+    then
+        echo "registradores ao fim $(imprimir_registradores)"
+    fi
+
 }
 
 function get_instr_type() {
@@ -184,6 +184,23 @@ function imprimir_variaveis() {
 
     memory[$data_loc]=${memory[$data_loc]}
     "
+}
+
+function imprimir_registradores() {
+    echo "AC = $AC PC = $PC"
+}
+
+function imprimir_instrucao() {
+    echo "instrução $instr_type $(imprimir_dados)"
+}
+
+function imprimir_registradores_e_instrucao() {
+    echo "$(imprimir_registradores) | $(imprimir_instrucao)"
+}
+
+function testa_cabecalho_memoria() {
+    #TODO: generalizar
+    [ "$(ler_cabecalho '/home/jose/ufrgs/2021-2/arq 1/NEANDER/exemplos/nop nop hlt.mem')" = "$( echo -n -e '\x03\x4e\x44\x52' )" ] ; echo $?
 }
 
 principal "$@"
